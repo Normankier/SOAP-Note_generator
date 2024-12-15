@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOAP Note Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .form-container {
+            display: none;
+            margin-top: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .submit-btn {
+            background-color: green;
+        }
+        .feedback {
+            display: none;
+            margin-top: 20px;
+            background: #e7ffe7;
+            padding: 10px;
+            border: 1px solid #b4d8b4;
+            color: #2c662c;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SOAP Note Generator</h1>
+        <button class="button" onclick="generateSOAP('Family Medicine')">Family Medicine</button>
+        <button class="button" onclick="generateSOAP('Internal Medicine')">Internal Medicine</button>
+        <button class="button" onclick="generateSOAP('Pediatrics')">Pediatrics</button>
+        <button class="button" onclick="generateSOAP('Geriatrics')">Geriatrics</button>
+        <button class="button" onclick="generateSOAP('Preventive Medicine')">Preventive Medicine</button>
+        <button class="button" onclick="generateSOAP('Women’s Health')">Women’s Health</button>
+
+        <div class="form-container" id="formContainer">
+            <h2 id="formTitle"></h2>
+            <textarea id="soapNote" placeholder="SOAP Note Content"></textarea>
+            <textarea id="studentAnswers" placeholder="Why did you choose these components?"></textarea>
+            <button class="button submit-btn" onclick="submitSOAP()">Submit</button>
+            <div class="feedback" id="feedback"></div>
+        </div>
+    </div>
+
+    <script>
+        function generateSOAP(specialty) {
+            const formContainer = document.getElementById('formContainer');
+            const formTitle = document.getElementById('formTitle');
+            const soapNote = document.getElementById('soapNote');
+
+            formContainer.style.display = 'block';
+            formTitle.innerText = `${specialty} SOAP Note`;
+            soapNote.value = `SOAP Note for ${specialty}:\n\nS: (Subjective data here)\nO: (Objective data here)\nA: (Assessment details here)\nP: (Plan details here)`;
+        }
+
+        function submitSOAP() {
+            const soapNote = document.getElementById('soapNote').value;
+            const studentAnswers = document.getElementById('studentAnswers').value;
+
+            fetch('https://your-api-endpoint.com/grade-soap', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    soapNote: soapNote,
+                    studentAnswers: studentAnswers,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const feedback = document.getElementById('feedback');
+                    feedback.style.display = 'block';
+                    feedback.innerHTML = `<strong>Feedback:</strong> ${data.feedback}<br><strong>Grade:</strong> ${data.grade}`;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
